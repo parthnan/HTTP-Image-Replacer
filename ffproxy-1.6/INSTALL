@@ -1,0 +1,45 @@
+Installation
+============
+
+  (1) `$ ./configure', see `$ ./configure --help' for possible settings
+  (2) `$ make' to compile ffproxy
+
+  after succesful compilation:
+
+  (3.a) `# make install'
+	for a full install of ffproxy in
+		${PREFIX}/{bin,etc,man,share/ffproxy}
+	(overwrites existing configuration files!)
+
+  (3.b) `# make install_bin'
+	to install ffproxy binary only
+
+  (3.c) more install targets:
+	install_man	install manual pages
+	install_conf	install sample.conf to ${PREFIX}/etc/sample.conf
+	install_sample	install sample.conf to ${PREFIX}/share/ffproxy/
+	install_data	install db/ and html/ to ${PREFIX}/share/ffproxy/
+
+  (4) consult manual pages for configuration and start ffproxy
+
+  
+Documentation
+=============
+
+     * ffproxy.quick(7) - quick introduction to setting up ffproxy
+     * ffproxy(8) - command line options; db/ and html/ description
+     * ffproxy.conf(5) - description of configuration files
+
+Uninstalling
+============
+
+  following uninstall-targets exist:
+		uninstall	safe uninstall, remove binary,
+				sample.conf and manpages only
+
+		uninstall_man		manpages
+		uninstall_conf		${PREFIX}/etc/ffproxy.conf
+		uninstall_sample	sample.conf
+		uninstall_data		db/, html/
+
+		uninstall_all	all of above (removes your config!)

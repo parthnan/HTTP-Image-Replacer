@@ -1,0 +1,117 @@
+#
+# $Id: Makefile.in,v 1.13 2005/01/05 15:50:08 niklas Exp niklas $
+#
+
+#OPTIONS = -DDEBUG
+#OPTIONS = -W -Wall -Werror -Wpointer-arith -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wbad-function-cast -pedantic-errors -O2
+
+srcdir=@srcdir@
+VPATH=@srcdir@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+mandir=@mandir@
+
+DESTDIR= 
+SHELL=@SHELL@
+
+SRCS = main.c print.c socket.c request.c http.c alloc.c filter.c db.c file.c dns.c signals.c access.c regex.c msg.c poll.c number.c
+OBJS = $(SRCS:.c=.o)
+MANPAGES = ffproxy.8 ffproxy.conf.5 ffproxy.quick.7
+SMANPAGES = ffproxy.8.s ffproxy.conf.5.s ffproxy.quick.7.s
+
+MY_DBFILES=db/access.dyndns db/access.host db/access.ip db/filter.header.add db/filter.header.drop db/filter.header.entry db/filter.header.match db/filter.host.match db/filter.rheader.drop db/filter.rheader.entry db/filter.rheader.match db/filter.url.match
+MY_HTMLFILES=html/connect html/filtered html/invalid html/post html/resolve
+
+sysconfdir=@sysconfdir@
+datadir=@datadir@
+pkgdatadir=$(datadir)/ffproxy
+
+CC=@CC@
+CFLAGS=@CFLAGS@ -DCFGFILE="\"${sysconfdir}/ffproxy.conf\"" \
+		-DDATADIR="\"$(pkgdatadir)\"" $(OPTIONS)
+LDFLAGS=@LDFLAGS@
+LIBS=@LIBS@
+
+INSTALL=@INSTALL@
+INSTALL_PROGRAM=@INSTALL_PROGRAM@
+INSTALL_DATA=@INSTALL_DATA@
+
+all: ffproxy man conf
+
+man:
+	for i in $(MANPAGES); do \
+		sed -e 's|_BASE_|$(pkgdatadir)|g' -e 's|_CFGFILE_|$(sysconfdir)/ffproxy.conf|g' $$i.s > $$i; \
+		done || for i in $(MANPAGES); do \
+				cp $$i $$i.s; done
+
+conf:
+	sed -e 's|_BASE_|$(pkgdatadir)|g' sample.config.s \
+		> sample.config || cp sample.config.s sample.config
+	cp sample.config ffproxy.conf
+
+installdirs: mkinstalldirs
+	$(SHELL) $(srcdir)/mkinstalldirs $(DESTDIR)$(bindir) \
+		$(DESTDIR)$(datadir) \
+		$(DESTDIR)$(sysconfdir) \
+		$(DESTDIR)$(pkgdatadir) \
+		$(DESTDIR)$(pkgdatadir)/db \
+		$(DESTDIR)$(pkgdatadir)/html \
+		$(DESTDIR)$(mandir) \
+		$(DESTDIR)$(mandir)/man5 \
+		$(DESTDIR)$(mandir)/man7 \
+		$(DESTDIR)$(mandir)/man8
+
+install: installdirs install_bin install_man install_config install_sample install_data
+
+install_bin: ffproxy
+	$(INSTALL_PROGRAM) ffproxy $(DESTDIR)$(bindir)
+
+install_man: man
+	$(INSTALL_DATA) ffproxy.conf.5 $(DESTDIR)$(mandir)/man5
+	$(INSTALL_DATA) ffproxy.quick.7 $(DESTDIR)$(mandir)/man7
+	$(INSTALL_DATA) ffproxy.8 $(DESTDIR)$(mandir)/man8
+
+install_config: conf
+	$(INSTALL_DATA) ffproxy.conf $(DESTDIR)$(sysconfdir)
+
+install_sample: conf
+	$(INSTALL_DATA) sample.config $(DESTDIR)$(pkgdatadir)
+
+install_data:
+	$(INSTALL_DATA) $(MY_DBFILES) $(DESTDIR)$(pkgdatadir)/db
+	$(INSTALL_DATA) $(MY_HTMLFILES) $(DESTDIR)$(pkgdatadir)/html
+
+uninstall: uninstall_bin uninstall_man uninstall_sample
+
+uninstall_all: uninstall uninstall_config uninstall_data
+
+uninstall_bin:
+	-rm -f $(DESTDIR)$(bindir)/ffproxy
+
+uninstall_man:
+	-rm -f $(DESTDIR)$(mandir)/man5/ffproxy.conf.5
+	-rm -f $(DESTDIR)$(mandir)/man7/ffproxy.quick.7
+	-rm -f $(DESTDIR)$(mandir)/man8/ffproxy.8
+
+uninstall_sample:
+	-rm -f $(DESTDIR)$(pkgdatadir)/sample.config
+
+uninstall_config:
+	-rm -f $(DESTDIR)$(sysconfdir)/ffproxy.conf
+
+uninstall_data: uninstall_sample
+	-( cd $(DESTDIR)$(pkgdatadir) && rm -f $(MY_DBFILES) )
+	-( cd $(DESTDIR)$(pkgdatadir) && rm -f $(MY_HTMLFILES) )
+	-rmdir $(DESTDIR)$(pkgdatadir)/db
+	-rmdir $(DESTDIR)$(pkgdatadir)/html
+	-rmdir $(DESTDIR)$(pkgdatadir)
+
+ffproxy: $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+
+clean:
+	rm -f $(OBJS) $(MANPAGES) sample.config ffproxy.conf ffproxy
+
+distclean: clean
+	rm -f Makefile configure.h config.cache config.log config.status

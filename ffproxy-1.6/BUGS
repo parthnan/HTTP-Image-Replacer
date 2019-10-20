@@ -1,0 +1,15 @@
+I've access to a limited number of different
+systems only, so it's not guaranteed that
+ffproxy will compile or work at all.
+
+So far, I've tested ffproxy to work under
+OpenBSD (x86), NetBSD (x86), FreeBSD (x86),
+Linux (x86) and Solaris9 (sparc)
+(compiled with gcc).
+
+If you've patches to make ffproxy work
+on other systems, or if you've success stories,
+please let me know.
+
+Send bug reports, comments, questions
+to Niklas Olmes <niklas@noxa.de>
