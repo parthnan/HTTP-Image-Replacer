@@ -4,8 +4,7 @@ Modified an Open Source HTTP Proxy software, ffproxy(http://ffproxy.sourceforge.
 Motivation : This modified software enables users to replace images on specific blacklisted sites with specified image, allowing content blocking and a smoother web experience.
 
 # Test Run
-It completely changed my msn home page! All images replaced by this image:https://images.pexels.com/photos/18495/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=3X5  . However it is buggy with some other HTTP sites, progress ongoing.
-
+Usage method below image. It completely changed my msn home page! All images replaced by this image:https://images.pexels.com/photos/18495/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=3X5  . 
 ![alt text](https://raw.githubusercontent.com/parthnan/HTTP-Image-Replacer/master/replaced.png)
 
 # How To Use
